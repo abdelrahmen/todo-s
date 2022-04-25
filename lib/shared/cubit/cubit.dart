@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,9 +14,9 @@ class AppCubit extends Cubit<AppState> {
 
   int currentIndex = 0;
   List<Widget> screens = [
-    NewTaskScreen(),
-    DoneTaskScreen(),
-    ArchivedTaskScreen(),
+    const NewTaskScreen(),
+    const DoneTaskScreen(),
+    const ArchivedTaskScreen(),
   ];
 
   List<String> titleString = [
@@ -41,18 +40,16 @@ class AppCubit extends Cubit<AppState> {
       'todo.db',
       version: 1,
       onCreate: (db, version) {
-        print('database created');
         db
             .execute(
                 'CREATE TABLE Tasks (id INTEGER PRIMARY KEY, title TEXT,date TEXT,time TEXT,status TEXT)')
-            .then((value) => print('table created'))
+            .then((value){})
             .catchError((e) {
           print('error ${e.toString()}');
         });
       },
       onOpen: (db) {
         getData(db);
-        print('db opened');
       },
     ).then((value) {
       database = value;
@@ -70,7 +67,6 @@ class AppCubit extends Cubit<AppState> {
           .rawInsert(
               'INSERT INTO Tasks (title, date, time, status) VALUES("$title", "$date", "$time", "new")')
           .then((value) {
-        print('$value inserted succesfully');
         emit(InsertDatabaseState());
         getData(database);
       }).catchError((e) {
@@ -115,7 +111,8 @@ class AppCubit extends Cubit<AppState> {
   void deleteData({
     required int id,
   }) async {
-    await database!.rawDelete('DELETE FROM Tasks WHERE id = ?', [id]).then((value) {
+    await database!
+        .rawDelete('DELETE FROM Tasks WHERE id = ?', [id]).then((value) {
       getData(database);
       emit(DeleteFromDatabaseState());
     });

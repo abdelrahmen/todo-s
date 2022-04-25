@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:todos/modules/archived_tasks/archived_tasks_screen.dart';
-import 'package:todos/modules/done_tasks/done_tasks_screen.dart';
-import 'package:todos/modules/new_tasks/new_tasks_screen.dart';
 import 'package:todos/shared/cubit/cubit.dart';
 import 'package:todos/shared/cubit/states.dart';
-import '../shared/components/constants.dart';
 
 class HomeScreen extends StatelessWidget {
-  var scaffoldKey = GlobalKey<ScaffoldState>();
-  var formKey = GlobalKey<FormState>();
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  final formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final timeController = TextEditingController();
+  final dateController = TextEditingController();
 
-  var titleController = TextEditingController();
-  var timeController = TextEditingController();
-  var dateController = TextEditingController();
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +22,7 @@ class HomeScreen extends StatelessWidget {
       //3rd wrap the scaffold with a BlocConsumer
       child: BlocConsumer<AppCubit, AppState>(
         listener: (BuildContext context, state) {
-          if (state is InsertDatabaseState){
+          if (state is InsertDatabaseState) {
             Navigator.pop(context);
           }
         },
@@ -40,7 +36,7 @@ class HomeScreen extends StatelessWidget {
             ),
             body: state is! GetDatabaseLoadingState
                 ? cubit.screens[cubit.currentIndex]
-                : Center(child: CircularProgressIndicator()),
+                : const Center(child: CircularProgressIndicator()),
             bottomNavigationBar: BottomNavigationBar(
               onTap: (value) {
                 cubit.changeIndex(value);
@@ -70,20 +66,6 @@ class HomeScreen extends StatelessWidget {
                         title: titleController.text,
                         date: dateController.text,
                         time: timeController.text);
-                    /*insertToDatabase(
-                      date: dateController.text,
-                      time: timeController.text,
-                      title: titleController.text,
-                    ).then((value) {
-                      getData(database).then((value) {
-                        tasks = value;
-                        Navigator.pop(context);
-                        isBottomSheetShown = false;
-                        //setState(() {
-                        //  buttonIcon = Icons.edit;
-                        //});
-                      });
-                    });*/
                   }
                   //show the bottom sheet
                 } else {
@@ -108,8 +90,8 @@ class HomeScreen extends StatelessWidget {
                                         borderRadius:
                                             BorderRadius.circular(10.0),
                                       ),
-                                      label: Text('task title'),
-                                      prefixIcon: Icon(Icons.title)),
+                                      label: const Text('task title'),
+                                      prefixIcon: const Icon(Icons.title)),
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return 'title cannot be empty';
@@ -193,17 +175,8 @@ class HomeScreen extends StatelessWidget {
                       showsheet: false,
                       icon: Icons.edit,
                     );
-                    //setState(() {
-                    //isBottomSheetShown = false;
-                    // buttonIcon = Icons.edit;
-                    //});
                   });
-                  cubit.changeBottomSheet(
-                      showsheet: true, icon: Icons.add);
-                  //setState(() {
-                  //isBottomSheetShown = true;
-                  //buttonIcon = Icons.add;
-                  //});
+                  cubit.changeBottomSheet(showsheet: true, icon: Icons.add);
                 }
               },
               child: Icon(cubit.floatingbuttonIcon),
